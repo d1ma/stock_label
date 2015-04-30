@@ -111,8 +111,6 @@ Currently each sentence has three features that the decision tree will use.
 - Contains the word 'stock' or 'share'
 
 
-
-
     from sentence import *
     sentence_objs = []
     features = [ContainsCommaNumber, SentenceLength, ContainsStockOrShare]
@@ -129,11 +127,11 @@ Currently each sentence has three features that the decision tree will use.
     sentence_vecs = [s.to_vector(features) for s in sentence_objs]
     output_labels = [s.is_interesting_as_int() for s in sentence_objs]
     print "Processed %i sentences" % len(sentence_objs)
-    print "   %i are interesting" % output_labels.count(1)
+    print " %i are interesting" % output_labels.count(1)
 
 
     Processed 10057 sentences
-       179 are interesting
+     179 are interesting
 
 
 
@@ -176,7 +174,7 @@ Currently each sentence has three features that the decision tree will use.
 
 
 
-![png](Stock%20Labeling_files/Stock%20Labeling_10_1.png)
+![png](output_10_1.png)
 
 
     [[6612    7]
@@ -192,7 +190,7 @@ Currently each sentence has three features that the decision tree will use.
 
 
 
-![png](Stock%20Labeling_files/Stock%20Labeling_10_3.png)
+![png](output_10_3.png)
 
 
     [[3245   14]
