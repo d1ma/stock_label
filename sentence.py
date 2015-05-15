@@ -3,9 +3,7 @@ import string
 import re
 import numpy as np
 
-parser = nltk.data.load('tokenizers/punkt/english.pickle')
-filter_ascii = lambda s: filter(lambda x: x in string.printable, s)
-regex = "\[\[(.*?)\]\]"
+from util import *
 
 class SentenceFeature(object):
 	""" Given a Sentence object, should return a vector of properties """
