@@ -14,3 +14,4 @@ import string
 parser = nltk.data.load('tokenizers/punkt/english.pickle')
 filter_ascii = lambda s: filter(lambda x: x in string.printable, s)
 regex = "\[\[(.*?)\]\]"
+comma_int = r'\d+(?:,\d+)+'
