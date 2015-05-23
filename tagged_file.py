@@ -33,13 +33,16 @@ class Number(object):
 
 
 class Tag(object):
-	def __init__(self, tag, pos):
+	def __init__(self, tag, pos, chunk):
 		self.tag_raw = tag
 		self.tag_clean = tag[2:-2]
 		split = self.tag_clean.split(":")
 		self.tag_key = split[0]
 		self.tag_val = split[1]
 		self.pos = pos
+		chunk_substr_start = chunk.find(" ")
+		chunk_substr_end = chunk.rfind(" ")
+		self.chunk = chunk[chunk_substr_start: chunk_substr_end]
 
 	@property
 	def is_number_tag(self):
@@ -86,7 +89,7 @@ class TFile(object):
 			for m in re.finditer(regex, self.raw):
 				sp = m.span()
 				adjusted_pos = sp[0] - running_length
-				tag_obj = Tag(m.group(), adjusted_pos)
+				tag_obj = Tag(m.group(), adjusted_pos, self.raw_clean[max(0, adjusted_pos - 150): adjusted_pos + 100])
 				self.tags += [tag_obj]
 				self.pos_to_tag[tag_obj.pos] = tag_obj
 				running_length += sp[1] - sp[0]
@@ -95,7 +98,7 @@ class TFile(object):
 			for num_match in re.finditer(comma_int, self.raw_clean):
 				num = num_match.group()
 				label = self.closest_label(num_match.end())
-				if label and abs(label.pos - num_match.end()) < 20:
+				if label and abs(label.pos - num_match.end()) < 50 :
 					self.numbers += [Number(num, num_match.end(), label)]
 				else:
 					self.numbers += [Number(num, num_match.end(), None)]
@@ -103,7 +106,6 @@ class TFile(object):
 
 	def tagged_numbers(self):
 		return filter(lambda x: x.label != None, self.numbers)
-
 
 
 
