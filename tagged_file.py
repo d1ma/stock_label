@@ -10,14 +10,18 @@ that are labelled like this "fragment"[[Tag: value]]
 import re
 import string
 import os
+import json
+import numpy as np
 
 from sentence import *
 from util import *
-comma_int = r'\d+(?:,\d+)+'
+CB = 200
+CF = 100
 
+labels = {'Series FV Preferred Shares': 'PS', 'Series C2 Preferred Shares': 'PS', 'Series D Preferred Shares': 'PS', 'Series 1 Preferred Shares': 'PS', 'Series Seed1 Preferred Shares': 'PS', 'Series Seed Preferred Shares': 'PS', 'Common Shares': 'CS', 'Series E1 Preferred Shares': 'PS', 'Series A1 Preferred Shares': 'PS', 'Class A Common Shares': 'CS', 'Series 5B2 Preferred Shares': 'PS', 'Series AA Preferred Shares': 'PS', 'Series B2 Preferred Shares': 'PS', 'Series A Preferred Shares': 'PS', 'Series E Preferred Shares': 'PS', 'Series A2 Preferred Shares': 'PS', 'Series B1 Preferred Shares': 'PS', 'Series C Preferred Shares': 'PS', 'Series F1 Preferred Shares': 'PS', 'Series 5 Preferred Shares': 'PS', 'Series 4 Preferred Shares': 'PS', 'Series B Preferred Shares': 'PS', 'Series A3 Preferred Shares': 'PS', 'Series 5A Preferred Shares': 'PS', 'Series 3 Preferred Shares': 'PS', 'Series Z Preferred Shares': 'PS', 'Total Shares': 'TS', 'Series 2 Preferred Shares': 'PS', 'Series D1 Preferred Shares': 'PS', 'Series BB Preferred Shares': 'PS', 'Series 5B1 Preferred Shares': 'PS', 'Series Junior Preferred Shares': 'PS', 'Preferred Shares': 'PS', 'Series C1 Preferred Shares': 'PS', 'Class B Common Shares': 'CS', 'Series FT Preferred Shares': 'PS'}
 
 class Number(object):
-	def __init__(self, numstr, pos, label):
+	def __init__(self, numstr, pos, label, context):
 		self.match = numstr
 		try: 
 			self.num = int(numstr.replace(',', ''))
@@ -26,23 +30,30 @@ class Number(object):
 			self.num = None
 		self.pos = pos
 		self.label = label
+		self.context = context
+		self.feature_vector = None
 
 	def __repr__(self):
 		tagged = "not tagged" if self.label == None else "tagged"
 		return "%s at %i (%s)" % (self.match, self.pos, tagged)
 
+	def set_feature_vector(self, vector):
+		self.feature_vector = vector
+
+
+
+
+
 
 class Tag(object):
-	def __init__(self, tag, pos, chunk):
+	def __init__(self, tag, pos, context):
 		self.tag_raw = tag
 		self.tag_clean = tag[2:-2]
 		split = self.tag_clean.split(":")
 		self.tag_key = split[0]
 		self.tag_val = split[1]
 		self.pos = pos
-		chunk_substr_start = chunk.find(" ")
-		chunk_substr_end = chunk.rfind(" ")
-		self.chunk = chunk[chunk_substr_start: chunk_substr_end]
+		self.context = context # tuple (chunk, sentences)
 
 	@property
 	def is_number_tag(self):
@@ -59,7 +70,8 @@ class Tag(object):
 
 
 class TFile(object):
-	def __init__(self, filename):
+	featurizer = None
+	def __init__(self, filename, index_id):
 		with open(filename) as f:
 			""" 
 			Already implemented: 
@@ -68,45 +80,73 @@ class TFile(object):
 			name: filename
 			raw_clean: without the labels
 			tags: the tags, in order of appearance
-			sentences: a list of sentence objects
-
-			To implement:
-			------------
 			numbers: Number elements
 			"""
+			self.id = index_id
 			self.raw = filter_ascii(f.read())
 			self.name = filename
 			self.raw_clean = re.sub(regex, "", self.raw)
 			self.tags = []
 			self.pos_to_tag = {}
-			
-			self.sentences = []
+			self.numbers = []
 
-			for s in parser.tokenize(self.raw):
-				self.sentences += [Sentence(s)]
+			# self.sentences = []
+
+			# for s in parser.tokenize(self.raw):
+			# 	self.sentences += [Sentence(s)]
 
 			running_length = 0
 			for m in re.finditer(regex, self.raw):
 				sp = m.span()
 				adjusted_pos = sp[0] - running_length
-				tag_obj = Tag(m.group(), adjusted_pos, self.raw_clean[max(0, adjusted_pos - 150): adjusted_pos + 100])
+
+				chunk_before = self.raw_clean[max(0, adjusted_pos - CB): adjusted_pos]
+				chunk_after = self.raw_clean[adjusted_pos: adjusted_pos + CF]
+				tag_obj = Tag(m.group(), adjusted_pos, get_context(chunk_before, chunk_after))
 				self.tags += [tag_obj]
 				self.pos_to_tag[tag_obj.pos] = tag_obj
 				running_length += sp[1] - sp[0]
 
-			self.numbers = []
 			for num_match in re.finditer(comma_int, self.raw_clean):
 				num = num_match.group()
 				label = self.closest_label(num_match.end())
+				num_position = num_match.end()
+				chunk_before = self.raw_clean[max(0, num_position - CB): num_position]
+				chunk_after = self.raw_clean[num_position: num_position + CF]
+				context = get_context(chunk_before, chunk_after)
 				if label and abs(label.pos - num_match.end()) < 50 :
-					self.numbers += [Number(num, num_match.end(), label)]
+
+					self.numbers += [Number(num, num_match.end(), label, context)]
 				else:
-					self.numbers += [Number(num, num_match.end(), None)]
+					self.numbers += [Number(num, num_match.end(), None, context)]
+
+	@property
+	def features(self):
+
+
+		if not featurizer:
+			raise Exception("Need to run TFile assign features on the corpus")
+		return featurizer.get(self.id)
+
+	@classmethod
+	def assignFeatures(cls, FeaturizerClass, training_corpus):
+		""" 
+		Creates the featurizer class that is responsible for handling all 
+		of the mappings for the passed in corpus
+		"""
+		cls.featurizer = FeaturizerClass(training_corpus)
+
+
 
 
 	def tagged_numbers(self):
 		return filter(lambda x: x.label != None, self.numbers)
 
+
+	def to_json(self):
+		d = {'filename': self.name, 'numbers': [ob.__dict__ for ob in self.numbers],
+		 	'tags': [ob.__dict__ for ob in self.tags]}
+		return json.dumps(d)
 
 
 	def closest_label(self, number_loc):
@@ -119,9 +159,16 @@ class TFile(object):
 	def num_tags(self):
 		return len(self.tags)
 
-	def find_numbers(self):
-		matches = re.findall(comma_int, self.raw_clean)
-		return matches
+
+	def describe(self):
+		r = "### [ Numbers ] ###\n"
+		r += "\n".join([str(n) for n in self.numbers]) + "\n"
+		r += "### [ Tags ] ###\n"
+		r += "\n".join([str(t) for t in self.tags]) + "\n"
+		r += "### [ Raw ] ###\n"
+		r += self.raw_clean
+		return r
+
 
 	def __repr__(self):
 		return "(%i numbers, %i tags, %i tagged numbers)" % (len(self.numbers), len(self.tags), len(self.tagged_numbers()))
@@ -129,9 +176,28 @@ class TFile(object):
 
 def read_directory(path):
 	tagged_files = []
+	i = 0
 	for f in os.listdir(path):
 		name = os.path.join(path,f)
 		if os.path.isfile(name):
-			tagged_files += [TFile(name)]
+			tagged_files += [TFile(name, i)]
+			i += 1
 
 	return tagged_files
+
+
+
+
+def get_context(chunk_before, chunk_after):
+	""" try to get sentence perhaps? """
+	before_start = chunk_before.find(" ")
+	after_end = chunk_after.rfind(" ")
+	before_stripped = chunk_before[before_start:]
+	after_stripped = chunk_after[0:after_end]
+	# sentence_list = []
+
+	# for s in parser.tokenize(chunk_stripped):
+	# 	sentence_list += [Sentence(s)]
+
+
+	return before_stripped, after_stripped
