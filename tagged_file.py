@@ -18,10 +18,13 @@ from util import *
 CB = 200
 CF = 100
 
-labels = {'Series FV Preferred Shares': 'PS', 'Series C2 Preferred Shares': 'PS', 'Series D Preferred Shares': 'PS', 'Series 1 Preferred Shares': 'PS', 'Series Seed1 Preferred Shares': 'PS', 'Series Seed Preferred Shares': 'PS', 'Common Shares': 'CS', 'Series E1 Preferred Shares': 'PS', 'Series A1 Preferred Shares': 'PS', 'Class A Common Shares': 'CS', 'Series 5B2 Preferred Shares': 'PS', 'Series AA Preferred Shares': 'PS', 'Series B2 Preferred Shares': 'PS', 'Series A Preferred Shares': 'PS', 'Series E Preferred Shares': 'PS', 'Series A2 Preferred Shares': 'PS', 'Series B1 Preferred Shares': 'PS', 'Series C Preferred Shares': 'PS', 'Series F1 Preferred Shares': 'PS', 'Series 5 Preferred Shares': 'PS', 'Series 4 Preferred Shares': 'PS', 'Series B Preferred Shares': 'PS', 'Series A3 Preferred Shares': 'PS', 'Series 5A Preferred Shares': 'PS', 'Series 3 Preferred Shares': 'PS', 'Series Z Preferred Shares': 'PS', 'Total Shares': 'TS', 'Series 2 Preferred Shares': 'PS', 'Series D1 Preferred Shares': 'PS', 'Series BB Preferred Shares': 'PS', 'Series 5B1 Preferred Shares': 'PS', 'Series Junior Preferred Shares': 'PS', 'Preferred Shares': 'PS', 'Series C1 Preferred Shares': 'PS', 'Class B Common Shares': 'CS', 'Series FT Preferred Shares': 'PS'}
+labels = {'Total Shares': "TS", 'Series FV Preferred Shares': 'PS', 'Series C2 Preferred Shares': 'PS', 'Series D Preferred Shares': 'PS', 'Series 1 Preferred Shares': 'PS', 'Series Seed1 Preferred Shares': 'PS', 'Series Seed Preferred Shares': 'PS', 'Common Shares': 'CS', 'Series E1 Preferred Shares': 'PS', 'Series A1 Preferred Shares': 'PS', 'Class A Common Shares': 'CS', 'Series 5B2 Preferred Shares': 'PS', 'Series AA Preferred Shares': 'PS', 'Series B2 Preferred Shares': 'PS', 'Series A Preferred Shares': 'PS', 'Series E Preferred Shares': 'PS', 'Series A2 Preferred Shares': 'PS', 'Series B1 Preferred Shares': 'PS', 'Series C Preferred Shares': 'PS', 'Series F1 Preferred Shares': 'PS', 'Series 5 Preferred Shares': 'PS', 'Series 4 Preferred Shares': 'PS', 'Series B Preferred Shares': 'PS', 'Series A3 Preferred Shares': 'PS', 'Series 5A Preferred Shares': 'PS', 'Series 3 Preferred Shares': 'PS', 'Series Z Preferred Shares': 'PS', 'Total Shares': 'TS', 'Series 2 Preferred Shares': 'PS', 'Series D1 Preferred Shares': 'PS', 'Series BB Preferred Shares': 'PS', 'Series 5B1 Preferred Shares': 'PS', 'Series Junior Preferred Shares': 'PS', 'Preferred Shares': 'PS', 'Series C1 Preferred Shares': 'PS', 'Class B Common Shares': 'CS', 'Series FT Preferred Shares': 'PS'}
+labels_min = {'Total Shares': "TS", 'Common Shares': "CS", 'Preferred Shares': "PS"}
+output_vals = {"n/a": 0, "TS": 1, "PS": 2, "CS": 3}
+
 
 class Number(object):
-	def __init__(self, numstr, pos, label, context):
+	def __init__(self, numstr, pos, label, context, original_file):
 		self.match = numstr
 		try: 
 			self.num = int(numstr.replace(',', ''))
@@ -32,6 +35,7 @@ class Number(object):
 		self.label = label
 		self.context = context
 		self.feature_vector = None
+		self.tfile = original_file
 
 	def __repr__(self):
 		tagged = "not tagged" if self.label == None else "tagged"
@@ -40,9 +44,14 @@ class Number(object):
 	def set_feature_vector(self, vector):
 		self.feature_vector = vector
 
-
-
-
+	@property
+	def output_value(self):
+		if self.label:
+			short = labels_min.get(self.label.tag_key, "n/a")
+			val = output_vals.get(short, 0)
+			return val
+		else:
+			return output_vals.get("n/a", 0)
 
 
 class Tag(object):
@@ -115,18 +124,11 @@ class TFile(object):
 				chunk_after = self.raw_clean[num_position: num_position + CF]
 				context = get_context(chunk_before, chunk_after)
 				if label and abs(label.pos - num_match.end()) < 50 :
-
-					self.numbers += [Number(num, num_match.end(), label, context)]
+					if label.tag_key == num or label.tag_val == num:
+						self.numbers += [Number(num, num_match.end(), label, context, self)]
 				else:
-					self.numbers += [Number(num, num_match.end(), None, context)]
+					self.numbers += [Number(num, num_match.end(), None, context, self)]
 
-	@property
-	def features(self):
-
-
-		if not featurizer:
-			raise Exception("Need to run TFile assign features on the corpus")
-		return featurizer.get(self.id)
 
 	@classmethod
 	def assignFeatures(cls, FeaturizerClass, training_corpus):
