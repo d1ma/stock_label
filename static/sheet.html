@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>NGB Admin Panel</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="select.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="style.css"></link>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"></link>
+</head>
+<body>
+    <nav id="nav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div id="navbar" class="navbar-collapse">
+              <!--   <div id="header">
+                </div> -->
+                <ul class="nav navbar-nav">
+                    <li>                    <img src="ngb.png"/>
+                    </li>
+                    <li>
+                    <li class="select_toggle" id="toggle_price" ><a  id="nav-price" class="navlink" href="">Price</a></li>
+                    <li class="select_toggle disabled" id="toggle_item"><a class="navlink"  id="nav-item" href="">Item</a></li>
+                    <li class="select_toggle disabled" id="toggle_locale"><a class="navlink"  id="nav-locale" href="">Locale</a></li>
+                    <li class="select_toggle disabled" id="toggle_subclass"><a class="navlink" id="nav-subclass" href="">Subclass</a></li>
+                </ul>
+
+
+                <ul class="nav navbar-nav navbar-right .disabled">
+                    <li class="nav_buttons"><a id="delete" href="#">Delete</a></li>
+                    <li class="nav_buttons" id="reset_toggle"><a id="reset" href="#">Reset Round</a></li>
+                    <li class="nav_buttons" id="add_toggle"><a id="add" href="#">Add</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+        <div class="container">
+
+    <div class="row">
+    <div id="content_container col-md-6">
+    <div id="spreadsheet_container">
+
+	<table id="spreadsheet">
+    
+    </ul>
+	</table>
+    </div>
+
+    <div id="json_container col-md-4">
+        <div id="human">
+        </div>
+    </div>
+
+    </div>
+    </div>
+    </div>
+
+
+
+</body>
+</html>

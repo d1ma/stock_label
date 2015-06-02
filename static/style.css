@@ -1,0 +1,459 @@
+table{
+	font-family:Arial, Helvetica, sans-serif;
+	color:#400000;
+	font-size:12px;
+}
+
+.cell{
+	padding:2px 4px 2px 4px;
+}
+
+
+td {
+	min-width: 100px;
+	padding:10px 5px;
+	border:#888 1px solid;
+	background: #fcfcfc;
+
+}
+
+td.price{
+	background-color: #00E0F5;
+
+
+	color:#333333;
+}
+
+td.item{
+	background-color: #7ac671;
+}
+
+.activeItem{
+	background-color: #7ac671;
+}
+
+.activePrice{
+	background-color: #00E0F5;
+
+}
+
+.activeLocale{
+	background-color: #fd7b66;
+}
+
+.activeSubclass{
+	background-color: #f1e0c5;
+}
+
+td.subclass1{
+	background-color: #f1e0c5;
+}
+
+td.subclass2{
+	background-color: #f1e07f;
+}
+
+td.subclass3{
+	background-color: #f1e032;
+}
+
+td.locale{
+	background-color: #fd7b66
+}
+
+td.processedPrice{
+	background-color: #CCC;
+	
+}
+
+td.processedItem{
+	background-color: #7ac671;
+	opacity:0.3;
+}
+
+td.processedSubclass{
+	background-color: #f1e0c5;
+	opacity:0.3;
+}
+
+td.processedLocale{
+	background-color: #fd7b66
+	opacity:0.3;
+}
+
+
+#nav{
+	background-color:#ffffff;
+	padding-bottom:10px;
+}
+
+img{
+	height:50px;
+	margin-top:10px;
+}
+
+#header{
+	margin-top:20px;
+
+}
+
+
+#admin_table_container{
+	margin-top:80px;
+	margin-left:150px;
+	margin-right:150px;
+}
+
+/*#content_container{
+	margin-top:300px;
+    margin-left:10px;
+}*/
+
+#spreadsheet_wrapper{
+	margin: 80px 0px 0px 60px;
+	width: 70%;
+	float: left;
+	border-radius:4px;
+
+}
+#spreadsheet_container{
+	height:500px;
+	overflow-x:auto;
+
+	border:1px solid rgba(0,0,0,0.3);
+	-webkit-box-shadow: outset 5px 5px 1px 3px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: outset 5px 5px 1px 3px rgba(0, 0, 0, 0.15);
+    box-shadow: outset 5px 5px 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+#json_container{
+	margin: 79px 50px 0px 10px;
+	float:right;
+	width: 20%;
+	background: #fcfcfc;
+
+}
+
+#json_container p{
+	font-family:Arial, Helvetica, sans-serif;
+	color:#400000;
+	font-size:12px;
+	padding:2px 4px 2px 4px;
+	-webkit-box-shadow: outset 5px 5px 1px 3px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: outset 5px 5px 1px 3px rgba(0, 0, 0, 0.15);
+    box-shadow: outset 5px 5px 1px 3px rgba(0, 0, 0, 0.15);
+	
+}
+
+#spreadsheet_wrapper h2{
+	font-family:Helvetica, sans-serif;
+	color:#333333;
+}
+
+#spreadsheet_wrapper p{
+	font-family:Helvetica, sans-serif;
+	color:rgb(252,115,94);
+	width:40%;
+	font-size:30px;
+}
+
+
+#json_container h2{
+	font-family:Helvetica, sans-serif;
+	color:#333333;
+}
+
+/*#json_container{
+	font-family: monospace;
+	font-size: 9px;
+}*/
+
+#sheet_id{
+	display:none;
+}
+
+#human{
+	display:none;
+}
+
+.options{
+	padding:5px;
+	height:500px;
+	border-radius:3px;
+	border:1px solid rgba(0,0,0,0.3);	
+	overflow-y: auto;
+	overflow-x:none;
+}
+
+.options p{
+	border:#888 1px solid;
+	border-radius:3px;
+	margin: auto;
+	margin-top:4px;
+	margin-bottom:4px;	
+	width:96%;
+	padding: 3px 3px 3px 3px; 
+
+}
+
+
+.lineItemActive{
+	background-color: #00E0F5;
+
+}
+
+/*#comp{
+	border:1px solid black;
+	height: 300px;
+	overflow-y: auto;
+
+
+
+
+
+}*/
+
+.nav_buttons{
+
+	text-align:center;
+	/*height:30px;*/
+
+	/*padding:-10px;*/
+	height: 48px;
+	margin:10px 0px 10px 5px;
+	border-radius:4px;
+	border:1px solid rgba(0,0,0,0.4);
+	background-color:#f2f2f2;
+	color:#2f4f4f;
+
+	font-family:Arial;
+
+}
+
+.active{
+	background-color:#e2e2e2;
+}
+
+.nav_buttons:hover{
+	color:#333333;
+
+}
+
+button a{
+	color:#2f4f4f;
+	font-family:Arial;
+	font-weight:900;
+	text-decoration:none;
+}
+
+button a:hover{
+	text-decoration: none;
+	color:#333333;
+}
+
+button a:visited{
+	text-decoration: none;
+		color:#333333;
+
+}
+
+button a:active{
+	text-decoration: none;
+		color:#333333;
+
+}
+
+button a:link{
+	text-decoration: none;
+		color:#333333;
+
+}
+
+
+.label a{
+	color: white;
+}
+
+
+.actions{
+	width:130px;
+}
+
+
+.actions a{
+	padding-top:0px;
+}
+
+.select_toggle{
+	width:80px;
+}
+
+.disabled{
+	/*background-color:rgba(100,100,100,0.1);*/
+	width:80px;
+	/*height:30px;*/
+}
+
+.options_buttons{
+	text-align:center;
+	width:22%;
+	height: 30px;
+	border-radius:4px;
+	background-color:#f2f2f2;
+	color:#2f4f4f;
+	font-weight: normal;
+	font-family: Arial;
+
+}
+.options_buttons a{
+	font-weight: normal;
+}
+
+#new-vendor{
+	margin-left:5px;
+	display:inline-block;
+	background-color:#f2f2f2;
+	border:1px solid #cccccc;
+	border-radius:4px;
+}
+
+.options p .form-control{
+	margin:auto;
+	font-size:12px;
+	width:60%;
+	display:inline-block;
+}
+
+#vendor{
+	height:60px;
+}
+
+
+#vendor a{
+	float:right;
+	font-weight:bold;
+}
+
+.invisible{
+	display:none;
+}
+
+.active{
+	background-color:#e2e2e2;
+
+}
+
+.admin_table_container{
+	margin-top:80px;
+}
+
+h3{
+	font-family:Arial,Helvetica,sans-serif;
+	color:#333333;
+	padding-left:30px;
+	margin-bottom:0px;
+}
+
+
+.modalDialog {
+	position: fixed;
+	font-family: Arial, Helvetica, sans-serif;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0,0,0,0.2);
+	z-index: 99999;
+	opacity:0;
+	-webkit-transition: opacity 400ms ease-in;
+	-moz-transition: opacity 400ms ease-in;
+	transition: opacity 100ms ease-in;
+	pointer-events: none;
+}
+
+.modalDialog:target {
+	opacity:1;
+	pointer-events: auto;
+}
+
+.modalDialog > div {
+	width: 600px;
+	height:400px;
+	position: relative;
+	margin: 10% auto;
+	padding: 5px 20px 13px 20px;
+	border-radius: 4px;
+	border:1px solid rgba(0,0,0,.5);
+	background: #f2f2f2;
+	overflow-y:auto;
+/*	background: #fff;
+	background: -moz-linear-gradient(#fff, #999);
+	background: -webkit-linear-gradient(#fff, #999);
+	background: -o-linear-gradient(#fff, #999);*/
+}
+
+.help_section {
+	width:500px;
+	height:80%;
+	margin:auto;
+	text-align:left;
+	padding: 20px;
+	overflow-y:auto;
+	margin-top:5px;
+	margin-bottom:5px;
+	border:1px solid #999999;
+}
+
+.help_section p{
+	width:100px;
+
+}
+
+.help_section table{
+	text-align:center;
+	margin:auto;
+	margin-top:5%;
+}
+
+.help_section td{
+	padding:10px;
+}
+
+select {
+	margin:auto;
+}
+
+.staged:hover{
+	cursor:pointer;
+}
+
+.unstaged:hover{
+	cursor:pointer;
+}
+
+#publish{
+	color:white;
+	font-weight:bold;
+}
+
+#pull{
+	font-weight:bold;
+}
+
+th:hover{
+	cursor:pointer;
+}
+
+.page-number{
+	font-size:20px;
+	padding:10px;
+	color:#c2c2c2;
+}
+
+.page-number:hover{
+	cursor:pointer;
+}
+
+.active_page{
+	color:#333333;
+}

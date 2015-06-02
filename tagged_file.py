@@ -80,6 +80,8 @@ class Tag(object):
 
 class TFile(object):
 	featurizer = None
+	id_to_tfile = {}
+
 	def __init__(self, filename, index_id):
 		with open(filename) as f:
 			""" 
@@ -92,8 +94,10 @@ class TFile(object):
 			numbers: Number elements
 			"""
 			self.id = index_id
+			TFile.id_to_tfile[index_id] = self
 			self.raw = filter_ascii(f.read())
-			self.name = filename
+			self.filename = filename
+			directory, self.basename = os.path.split(filename)
 			self.raw_clean = re.sub(regex, "", self.raw)
 			self.tags = []
 			self.pos_to_tag = {}
@@ -138,8 +142,7 @@ class TFile(object):
 		"""
 		cls.featurizer = FeaturizerClass(training_corpus)
 
-
-
+	
 
 	def tagged_numbers(self):
 		return filter(lambda x: x.label != None, self.numbers)
