@@ -56,25 +56,16 @@ class DecisionTree(GeneralModel):
 	def __repr__(self):
 		return "Decision Tree"
 
-class RandomForest():
+class RandomForest(GeneralModel):
 	def __init__(self, X, y):
-		
-		pass
-
-	def class_probabilities(self, X):
-		pass
-
-	def predict(self, X):
-		pass
-
-	def predict_for_file(self, X):
-		pass
+		from sklearn.ensemble import RandomForestClassifier 
+		self.clf = RandomForestClassifier(n_estimators=100).fit(X, y)
 
 	def __repr__(self):
 		return "Random Forest"
 
 
-used_classifiers = [SVM]
+used_classifiers = [SVM, RandomForest, DecisionTree]
 
 class MainClassifier():
 	def class_probabilities_file(self, tfile):
