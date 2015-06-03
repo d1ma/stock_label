@@ -2,6 +2,7 @@ import os
 import sys
 import json
 from datetime import datetime, timedelta
+import logging
 
 #=====[ Flask ]=====
 from flask import Flask
@@ -16,6 +17,7 @@ import tagged_file
 import featurize
 import main
 from auth import requires_auth
+import settings
 
 #=====[ App/DB setup]=====
 static_dir = 'static'
@@ -36,7 +38,8 @@ def dashboard():
     ===============
     List all of the available results
     """
-    return render_template("list_results.html.jinja2", tfiles=r.tfiles)
+    logging.debug("Getting list_results with %i files" % len(r.tfiles))
+    return render_template("list_results.html.jinja2", r=r)
 
 @app.route("/doc/<id>")
 @requires_auth
@@ -82,5 +85,7 @@ def get_static(filename):
 
 r = None
 if __name__ == '__main__':
+    settings.set_up()
+    logging.debug("entering main")
     r = main.Main()
     app.run(debug=True)

@@ -20,8 +20,8 @@ CF = 100
 
 labels = {'Total Shares': "TS", 'Series FV Preferred Shares': 'PS', 'Series C2 Preferred Shares': 'PS', 'Series D Preferred Shares': 'PS', 'Series 1 Preferred Shares': 'PS', 'Series Seed1 Preferred Shares': 'PS', 'Series Seed Preferred Shares': 'PS', 'Common Shares': 'CS', 'Series E1 Preferred Shares': 'PS', 'Series A1 Preferred Shares': 'PS', 'Class A Common Shares': 'CS', 'Series 5B2 Preferred Shares': 'PS', 'Series AA Preferred Shares': 'PS', 'Series B2 Preferred Shares': 'PS', 'Series A Preferred Shares': 'PS', 'Series E Preferred Shares': 'PS', 'Series A2 Preferred Shares': 'PS', 'Series B1 Preferred Shares': 'PS', 'Series C Preferred Shares': 'PS', 'Series F1 Preferred Shares': 'PS', 'Series 5 Preferred Shares': 'PS', 'Series 4 Preferred Shares': 'PS', 'Series B Preferred Shares': 'PS', 'Series A3 Preferred Shares': 'PS', 'Series 5A Preferred Shares': 'PS', 'Series 3 Preferred Shares': 'PS', 'Series Z Preferred Shares': 'PS', 'Total Shares': 'TS', 'Series 2 Preferred Shares': 'PS', 'Series D1 Preferred Shares': 'PS', 'Series BB Preferred Shares': 'PS', 'Series 5B1 Preferred Shares': 'PS', 'Series Junior Preferred Shares': 'PS', 'Preferred Shares': 'PS', 'Series C1 Preferred Shares': 'PS', 'Class B Common Shares': 'CS', 'Series FT Preferred Shares': 'PS'}
 labels_min = {'Total Shares': "TS", 'Common Shares': "CS", 'Preferred Shares': "PS"}
-output_vals = {"n/a": 0, "TS": 1, "PS": 2, "CS": 3}
-
+# output_vals = {"n/a": 0, "TS": 1, "PS": 2, "CS": 3}
+output_vals =  {"n/a": "n/a", "TS": "TS", "PS": "PS", "CS": "CS"}
 
 class Number(object):
 	def __init__(self, numstr, pos, label, context, original_file):
@@ -59,8 +59,8 @@ class Tag(object):
 		self.tag_raw = tag
 		self.tag_clean = tag[2:-2]
 		split = self.tag_clean.split(":")
-		self.tag_key = split[0]
-		self.tag_val = split[1]
+		self.tag_key = split[0] ## descriptive phrase
+		self.tag_val = split[1] ## the number
 		self.pos = pos
 		self.context = context # tuple (chunk, sentences)
 
@@ -142,10 +142,22 @@ class TFile(object):
 		"""
 		cls.featurizer = FeaturizerClass(training_corpus)
 
-	
-
 	def tagged_numbers(self):
 		return filter(lambda x: x.label != None, self.numbers)
+
+
+	def tagged_numbers_str(self):
+		nums = self.tagged_numbers()
+		num_with_tag = [(n.output_value, n.match) for n in nums]
+		r = {}
+		for (description, val) in num_with_tag:
+			if (description == "n/a"):
+				continue
+			current = r.get(description, [])
+			current += [val]
+			r[description] = current
+
+		return str(r)
 
 
 	def to_json(self):
@@ -174,7 +186,6 @@ class TFile(object):
 		r += self.raw_clean
 		return r
 
-
 	def __repr__(self):
 		return "(%i numbers, %i tags, %i tagged numbers)" % (len(self.numbers), len(self.tags), len(self.tagged_numbers()))
 
@@ -199,10 +210,6 @@ def get_context(chunk_before, chunk_after):
 	after_end = chunk_after.rfind(" ")
 	before_stripped = chunk_before[before_start:]
 	after_stripped = chunk_after[0:after_end]
-	# sentence_list = []
-
-	# for s in parser.tokenize(chunk_stripped):
-	# 	sentence_list += [Sentence(s)]
-
+	
 
 	return before_stripped, after_stripped
