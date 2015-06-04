@@ -1,6 +1,66 @@
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 
+class SumsToOther(object):
+	
+	def __init__(self, tfiles, vectorizer=None):
+		pass
+
+	def get_feature_vector(self, tfile_numbers):
+		"""
+			0. n/a
+			1. sums to one of the other numbers
+		"""
+		int_repr = [tn.num for tn in tfile_numbers]
+		result = []
+		for i in int_repr:
+			int_greater = [n for n in int_repr if n > i]
+			found = False
+
+			for greater_candidate in int_greater:
+
+				remainder = greater_candidate - i
+
+				if remainder in int_repr:
+					found = True
+					break
+
+			if found:
+				result += [1]
+			else:
+				result += [0]
+		return np.array(result).reshape(-1,1)
+
+class ContainsOthers(object):
+	""" 
+		0. n/a
+		1. sum of a subset of numbers
+	"""
+	def __init__(self, tfiles, vectorizer=None):
+		pass
+
+	def get_feature_vector(self, tfile_numbers):
+		int_repr = [tn.num for tn in tfile_numbers]
+		sums = set([])
+		for i in int_repr:
+			int_greater = [n for n in int_repr if n > i]
+			found = False
+
+			for greater_candidate in int_greater:
+				remainder = greater_candidate - i
+				if remainder in int_repr:
+					sums.add(greater_candidate)
+					break
+
+		result = []
+		for i in int_repr:
+			if i in sums:
+				result += [1]
+			else:
+				result += [0]
+		return np.array(result).reshape(-1,1)
+
+
 
 class NumberOrder(object):
 	""" 
@@ -71,7 +131,7 @@ class BagOfWordsAfter(object):
 
 
 class FeatureConstructor(object):
-	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder]
+	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder, ContainsOthers, SumsToOther]
 
 
 	def __init__(self, tfiles):
@@ -81,10 +141,6 @@ class FeatureConstructor(object):
 
 
 	def get_feature_matrix(self, tfile):
-		''' 
-		returns an np matrix, where each row is a feature vector
-		corresponding to each number in the tfile 
-		'''
 		running = None
 		if len(self.features) > 0:
 			running = self.features[0].get_feature_vector(tfile.numbers)
@@ -109,9 +165,6 @@ class FeatureConstructor(object):
 
 
 	def assign_feature_vectors(self, tfile):
-		'''
-		calls set_feature_vector on each of the numbers in the tfile
-		'''
 		feature_array = self.get_feature_matrix(tfile)
 		for row, number in zip(feature_array, tfile.numbers):
 			number.set_feature_vector(row)
