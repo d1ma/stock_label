@@ -37,9 +37,17 @@ class Main():
 		return [str(m) for m in self.cl.trained_clf]
 
 	def predict_class_for_each_number(self, tfile):
-		logging.debug(str(tfile.numbers))
 		pred = self.cl.predict_class_for_each_number(tfile)
-		logging.debug("Predicted values for this file %s" % str(pred))
 		output = zip(tfile.numbers, pred)
-		logging.debug("Outputting %s" % str(output))
+		return output
+
+	def get_probabilities_for_each_classifier_and_number(self, tfile):
+		class_probabilities = self.cl.class_probabilities_by_classifier(tfile)
+		output = []
+		for o in class_probabilities:
+			cl, p = o
+			p_with_num = zip(tfile.numbers, p)
+			output += [(cl, p_with_num)]
+
+		logging.debug(output)		
 		return output

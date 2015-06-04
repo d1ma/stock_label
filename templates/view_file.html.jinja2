@@ -36,7 +36,7 @@
                 <th>Tag in document</th>
                 <th>Context</th>
                 {% for cl in r.get_models() %}
-                    <th>Prediction using </th>
+                    <th>Using {{cl}}</th>
                 {% endfor %}
 
             </thead>
@@ -57,7 +57,23 @@
         </table>
     <!-- <div class="row"> -->
     <!-- <div id="col-md-6"> -->
+        <h2>Analysis of models</h2>
 
+        {% for cl, p_with_num in r.get_probabilities_for_each_classifier_and_number(tfile) %}
+        <h4>{{cl}}</h4>
+            <table>
+            <thead>
+                <th>Number</th>
+                <th>Probaility of {{" ,".join(cl.model.classes_)}}
+            </thead>
+            {% for num, p in p_with_num %}
+                <tr>
+                    <td>{{num.match}}</td>
+                    <td>{{p}}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        {% endfor %}
     </div>
    
     <!-- </div> -->

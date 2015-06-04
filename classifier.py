@@ -5,7 +5,7 @@ import numpy as np
 
 class GeneralModel(object):
 	def class_probabilities(self, X):
-		return self.clf.decision_function(X)
+		return self.clf.predict_proba(X)
 
 	def predict(self, X):
 		if X.size == 0:
@@ -37,43 +37,54 @@ class GeneralModel(object):
 		return return_dict
 
 
+
 class SVM(GeneralModel):
 	def __init__(self, X, y):
 		# create and train the SVM model
 		from sklearn import svm
-
-		self.clf = svm.SVC().fit(X, y)
+		self.model = svm.SVC(probability=True)
+		self.clf = self.model.fit(X, y)
 
 	def __repr__(self):
 		return "SVM"
 
 
+
 class DecisionTree(GeneralModel):
 	def __init__(self, X, y):
 		from sklearn import tree
-		self.clf = tree.DecisionTreeClassifier().fit(X, y)
+		self.model = tree.DecisionTreeClassifier()
+		self.clf = self.model.fit(X, y)
 
 	def __repr__(self):
 		return "Decision Tree"
 
+	def class_probabilities(self, X):
+		return self.clf.predict_proba(X)
+
 class RandomForest(GeneralModel):
 	def __init__(self, X, y):
 		from sklearn.ensemble import RandomForestClassifier 
-		self.clf = RandomForestClassifier(n_estimators=100).fit(X, y)
+		self.model = RandomForestClassifier(n_estimators=100)
+		self.clf = self.model.fit(X, y)
 
 	def __repr__(self):
 		return "Random Forest"
+
+	def class_probabilities(self, X):
+		return self.clf.predict_proba(X)
 
 
 used_classifiers = [SVM, RandomForest, DecisionTree]
 
 class MainClassifier():
-	def class_probabilities_file(self, tfile):
+
+	def class_probabilities_by_classifier(self, tfile):
 		X, y = self.featurizer.get_feature_matrix_and_output_vector(tfile)
-		r = {}
+		r = []
 		for c in self.trained_clf:
-			r[str(c)] = c.class_probabilities(X)
-		return r
+			r += [c.class_probabilities(X)]
+		return zip(self.trained_clf, r)
 
 
 
