@@ -42,12 +42,12 @@
         <tbody>
             {% for tfile, pred in r.get_predictions_per_file() %}
             <tr> 
-                <td> {{tfile.basename}} </td>
+                <td> <a href="doc/{{tfile.id}}">{{tfile.basename}}</a> </td>
                 <td> {{tfile}} </td>
                 <td> {{tfile.tagged_numbers_str()}} </td>
                     {% for m in r.get_models() %}
                 <td> {{pred.get(m)}} </td>
-                {% endfor %}
+                    {% endfor %}
             </tr>
             {% endfor %}
         </tbody>

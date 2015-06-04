@@ -41,10 +41,13 @@ def dashboard():
     logging.debug("Getting list_results with %i files" % len(r.tfiles))
     return render_template("list_results.html.jinja2", r=r)
 
-@app.route("/doc/<id>")
+@app.route("/doc/<int:id>")
 @requires_auth
 def get_file(id):
-    return render_template("view_file.html.jinja2", tfile=r.id_to_tfile(id))
+
+    f = r.id_to_tfile(id)
+    logging.debug("Rendering file %i: %s" % (id, str(r.id_to_tfile(id))))
+    return render_template("view_file.html.jinja2", tfile=f, r=r)
 
 ################################################################################
 ####################[ SERVING STATIC ]##########################################

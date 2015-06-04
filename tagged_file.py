@@ -41,6 +41,10 @@ class Number(object):
 		tagged = "not tagged" if self.label == None else "tagged"
 		return "%s at %i (%s)" % (self.match, self.pos, tagged)
 
+	@property
+	def tag_str(self):
+		return str(self.label.tag_key) if self.label else "None"
+
 	def set_feature_vector(self, vector):
 		self.feature_vector = vector
 
@@ -200,8 +204,6 @@ def read_directory(path):
 			i += 1
 
 	return tagged_files
-
-
 
 
 def get_context(chunk_before, chunk_after):

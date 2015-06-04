@@ -2,7 +2,7 @@ import os
 from os.path import expanduser
 
 import re
-from tagged_file import read_directory
+from tagged_file import read_directory, TFile
 from featurize import FeatureConstructor
 from classifier import MainClassifier
 from settings import full_input_dir
@@ -35,3 +35,11 @@ class Main():
 
 	def get_models(self):
 		return [str(m) for m in self.cl.trained_clf]
+
+	def predict_class_for_each_number(self, tfile):
+		logging.debug(str(tfile.numbers))
+		pred = self.cl.predict_class_for_each_number(tfile)
+		logging.debug("Predicted values for this file %s" % str(pred))
+		output = zip(tfile.numbers, pred)
+		logging.debug("Outputting %s" % str(output))
+		return output

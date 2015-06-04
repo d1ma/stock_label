@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <title>View File</title>
-    <script src="jquery.min.js"></script>
+    <script src="/jquery.min.js"></script>
+    <script src="/select.js" type="text/javascript"></script>
+    <script src="/sorttable.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/style.css"></link>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="bootstrap.min.css"></link>
+    <link rel="stylesheet" href="/bootstrap.min.css"></link>
 </head>
 <body>
     <nav id="nav" class="navbar navbar-default navbar-fixed-top">
@@ -19,9 +20,6 @@
                     
 
                 
-                    <li>
-                        Some button to view features
-                    </li>
 
                 </ul>
 
@@ -29,8 +27,34 @@
             </div>
     </nav>
 
-    <div class="content_container">
-        Here lies the document
+    <div id="admin_table_container">
+        <h2> Numbers in the document </h2>
+
+        <table class="table sortable" id="number_context">
+            <thead>
+                <th>Number</th>
+                <th>Tag in document</th>
+                <th>Context</th>
+                {% for cl in r.get_models() %}
+                    <th>Prediction using </th>
+                {% endfor %}
+
+            </thead>
+
+            <tbody>
+
+                {% for num, pred in r.predict_class_for_each_number(tfile) %}
+                <tr>
+                    <td>{{num.match}}</td>
+                    <td>{{num.tag_str}}</td>
+                    <td>{{num.context}}</td>
+                    {% for p in pred %}
+                        <td> {{ p }} </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     <!-- <div class="row"> -->
     <!-- <div id="col-md-6"> -->
 

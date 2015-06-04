@@ -75,7 +75,33 @@ class MainClassifier():
 			r[str(c)] = c.class_probabilities(X)
 		return r
 
+
+
+
+
+
+
+	def predict_class_for_each_number(self, tfile):
+		X = self.featurizer.get_feature_matrix(tfile)
+		r = []
+		for c in self.trained_clf:
+			d = c.predict(X)
+			r += [d]
+		return zip(*r)
+
+
+
+
+
+
+
+
+
 	def predict_for_file(self, tfile, exclude=[]):
+		""" 
+		Returns a dictionary with keys being the classifier names.
+		Each  value is a dictionary containing classes as keys, mapping to values
+		"""
 		X, y = self.featurizer.get_feature_matrix_and_output_vector(tfile)
 		r = {}
 		for c in self.trained_clf:
@@ -84,6 +110,7 @@ class MainClassifier():
 				if i in d:
 					del d[i]
 			r[str(c)] = d
+
 		return r
 
 	def __init__(self, tfiles, featurizer):
