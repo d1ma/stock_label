@@ -49,6 +49,10 @@ def get_file(id):
     logging.debug("Rendering file %i: %s" % (id, str(r.id_to_tfile(id))))
     return render_template("view_file.html.jinja2", tfile=f, r=r)
 
+@app.route("/model_report")
+@requires_auth
+def model_report():
+    return render_template("model_report.html.jinja2", r=r)
 ################################################################################
 ####################[ SERVING STATIC ]##########################################
 ################################################################################

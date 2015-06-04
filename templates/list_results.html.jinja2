@@ -19,8 +19,8 @@
                     <li><h3>VC Preliminary Results</h3></l3>
                 </ul>
 
-                <ul class="nav navbar-nav navbar-right .disabled">
-                   
+                <ul class="nav navbar-nav navbar-right">
+                   <li><button class="btn nav_buttons"><a href="/model_report">Overall report</a></button></li>
                 </ul>
                 </div>
             </div>
@@ -47,7 +47,7 @@
                 <td> {{tfile.tagged_numbers_str()}} </td>
                     {% for m in r.get_models() %}
                 <td> {{pred.get(m)}} </td>
-                    {% endfor %}
+                {% endfor %}
             </tr>
             {% endfor %}
         </tbody>

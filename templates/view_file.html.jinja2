@@ -16,8 +16,10 @@
                 </div> -->
               
 
-                <ul class="nav navbar-nav navbar-right .disabled">
-                    
+                <ul class="nav navbar-nav navbar-right">
+                    <li><button class="btn nav_buttons"><a href="/">Back</a></button></li>
+                    <li><button class="btn nav_buttons"><a href="/model_report">Overall report</a></button></li>
+
 
                 
 
@@ -28,7 +30,7 @@
     </nav>
 
     <div id="admin_table_container">
-        <h2> Numbers in the document </h2>
+        <h2> {{tfile.basename}} [id {{tfile.id}}] </h2>
 
         <table class="table sortable" id="number_context">
             <thead>

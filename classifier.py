@@ -18,7 +18,10 @@ class GeneralModel(object):
 		return cross_validation.cross_val_predict(self.clf, X, y)	
 
 	def get_report(self, X_all, y_all, cv=5):
-		return cross_validation.cross_val_predict(self.clf, X_all, y_all, cv=5 )
+		if X_all.size == 0:
+			return None
+		predict = cross_validation.cross_val_predict(self.clf, X_all, y_all, cv=5 )
+		return classification_report(y_all, predict)
 
 	def predict_for_file(self, X, raw_nums=None):
 		""" If raw_nums are given, will use those instead of the featurization when 
@@ -121,8 +124,14 @@ class MainClassifier():
 				if i in d:
 					del d[i]
 			r[str(c)] = d
-
 		return r
+
+
+
+	def get_report(self):
+		return [(cl, cl.get_report(self.all_features, self.all_labels)) for cl in self.trained_clf]
+
+
 
 	def __init__(self, tfiles, featurizer):
 		"""

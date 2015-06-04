@@ -51,3 +51,6 @@ class Main():
 
 		logging.debug(output)		
 		return output
+
+	def get_cl_report(self):
+		return self.cl.get_report()
