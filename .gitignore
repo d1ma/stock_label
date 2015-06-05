@@ -1,0 +1,7 @@
+*.pyc
+.ipynb_checkpoints/*
+word2vec
+train
+all_txt
+
+stanford-corenlp-python
