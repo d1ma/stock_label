@@ -1,0 +1,3 @@
+[submodule "stanford-corenlp-python"]
+	path = stanford-corenlp-python
+	url = https://github.com/dasmith/stanford-corenlp-python.git
