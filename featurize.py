@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 class SumsToOther(object):
 	
-	def __init__(self, tfiles, vectorizer=None):
+	def __init__(self, tfiles, *kargs):
 		pass
 
 	def get_feature_vector(self, tfile_numbers):
@@ -36,7 +36,7 @@ class ContainsOthers(object):
 		0. n/a
 		1. sum of a subset of numbers
 	"""
-	def __init__(self, tfiles, vectorizer=None):
+	def __init__(self, tfiles, *kargs):
 		pass
 
 	def get_feature_vector(self, tfile_numbers):
@@ -67,7 +67,7 @@ class NumberOrder(object):
 	feature representing how big this number is related to other numbers in this
 	file
 	"""
-	def __init__(self, tfiles, vectorizer=None):
+	def __init__(self, tfiles, *kargs):
 		pass
 
 	def get_feature_vector(self, tfile_numbers):
@@ -105,9 +105,9 @@ class BagOfWords(object):
 
 	
 class BagOfWordsBefore(object):
-	def __init__(self, tfiles, vectorizer=None):
+	def __init__(self, tfiles, *kargs):
 		self.tfiles = tfiles
-		self.vectorizer = vectorizer
+		self.vectorizer = kargs[0]
 
 	def get_feature_vector(self, tfile_numbers):
 		corpus_before = [n.context[0] for n in tfile_numbers]
@@ -118,9 +118,9 @@ class BagOfWordsBefore(object):
 		return ['B: ' + word for word in self.vectorizer.get_feature_names()]
 
 class BagOfWordsAfter(object):
-	def __init__(self, tfiles, vectorizer=None):
+	def __init__(self, tfiles, *kargs):
 		self.tfiles = tfiles
-		self.vectorizer = vectorizer
+		self.vectorizer = kargs[0]
 
 	def get_feature_vector(self, tfile_numbers):
 		corpus_after = [n.context[1] for n in tfile_numbers]
@@ -135,15 +135,14 @@ class BagOfWordsAfter(object):
 
 
 class FeatureConstructor(object):
-	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder, ContainsOthers, SumsToOther, Dependencies]
-
+	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder, ContainsOthers, SumsToOther]
 
 	def __init__(self, tfiles, stanford_parser_instance):
 		self.tfiles = tfiles
 		self.sp = stanford_parser_instance
 		self.v = BagOfWords.get_vectorizer()
-		self.features = [f(tfiles, self.v) for f in FeatureConstructor.tfile_feature_classes]
 		self.sp = stanford_parser_instance
+		self.features = [f(tfiles, self.v, self.sp) for f in FeatureConstructor.tfile_feature_classes]
 
 	def get_feature_matrix(self, tfile):
 		running = None
@@ -151,7 +150,6 @@ class FeatureConstructor(object):
 			running = self.features[0].get_feature_vector(tfile.numbers)
 		for f in self.features[1:]:
 			running = np.append(running, f.get_feature_vector(tfile.numbers), axis=1)
-
 		return running
 
 	def get_feature_matrix_and_numbers(self, tfile):
