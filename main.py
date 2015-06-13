@@ -6,17 +6,20 @@ from tagged_file import read_directory, TFile
 from featurize import FeatureConstructor
 from classifier import MainClassifier
 from settings import full_input_dir
+from dependency import StanfordParser
 import logging
 
 
 
 class Main():
 	def __init__(self):
-		logging.debug('Main. Reading directory')
+		logging.info('Main. Connecting to the Stanford-parser server (running locally)')
+		self.dep = StanfordParser()
+		logging.info('Main. Reading directory')
 		self.tfiles = read_directory(full_input_dir)
-		logging.debug('Main. Constructing Featurizer')
-		self.featurizer = FeatureConstructor(self.tfiles)
-		logging.debug('Main. Constructing Classifier')
+		logging.info('Main. Constructing Featurizer')
+		self.featurizer = FeatureConstructor(self.tfiles, self.dep)
+		logging.info('Main. Constructing Classifier')
 		self.cl = MainClassifier(self.tfiles, self.featurizer)
 		self.last_result = None
 

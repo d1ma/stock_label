@@ -129,16 +129,21 @@ class BagOfWordsAfter(object):
 	def get_feature_names(self):
 		return ['A: ' + word for word in self.vectorizer.get_feature_names()]
 
+# class Dependencies(object):
+# 	def __init__(self, tfiles, vectorizer=None, sp=None):
+
+
 
 class FeatureConstructor(object):
-	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder, ContainsOthers, SumsToOther]
+	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder, ContainsOthers, SumsToOther, Dependencies]
 
 
-	def __init__(self, tfiles):
+	def __init__(self, tfiles, stanford_parser_instance):
 		self.tfiles = tfiles
+		self.sp = stanford_parser_instance
 		self.v = BagOfWords.get_vectorizer()
 		self.features = [f(tfiles, self.v) for f in FeatureConstructor.tfile_feature_classes]
-
+		self.sp = stanford_parser_instance
 
 	def get_feature_matrix(self, tfile):
 		running = None
