@@ -22,7 +22,7 @@ class StanfordParser(object):
 
 		self.out_file = open(cache_filename, 'a', 1)
 		self.server = jsonrpc.ServerProxy(jsonrpc.JsonRpc20(),
-                           jsonrpc.TransportTcpIp(addr=("localhost", 8091), timeout=40.0))
+                           jsonrpc.TransportTcpIp(addr=("localhost", 8091), timeout=5.0))
 
 
 	def parse(self, text):
@@ -37,7 +37,7 @@ class StanfordParser(object):
 		else:
 			# get result and update cache
 			parse_result = self.parse(text)
-			for sentence in parse_result.get("sentences"):
+			for sentence in parse_result.get("sentences", []):
 				dep += sentence.get(u'dependencies')
 
 			cache_line = {text: dep}

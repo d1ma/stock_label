@@ -68,7 +68,7 @@ class DecisionTree(GeneralModel):
 class RandomForest(GeneralModel):
 	def __init__(self, X, y):
 		from sklearn.ensemble import RandomForestClassifier 
-		self.model = RandomForestClassifier(n_estimators=100)
+		self.model = RandomForestClassifier(n_estimators=300)
 		self.clf = self.model.fit(X, y)
 
 	def __repr__(self):
@@ -151,6 +151,8 @@ class MainClassifier():
 		self.test_files = self.tfiles[num_training_files:]
 
 		self.all_data = [featurizer.get_feature_matrix_and_output_vector(f) for f in self.tfiles]
+		all_data_vectors = [d[0] for d in self.all_data]
+		print([v.shape for v in all_data_vectors])
 		self.all_features = np.vstack(d[0] for d in self.all_data)
 		self.all_labels = np.hstack(d[1] for d in self.all_data)
 

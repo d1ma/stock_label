@@ -1,5 +1,8 @@
+
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
+import json
+
 
 class SumsToOther(object):
 	
@@ -10,6 +13,7 @@ class SumsToOther(object):
 		"""
 			0. n/a
 			1. sums to one of the other numbers
+			Returns a vector for each of the numbers (vertically)
 		"""
 		int_repr = [tn.num for tn in tfile_numbers]
 		result = []
@@ -18,7 +22,6 @@ class SumsToOther(object):
 			found = False
 
 			for greater_candidate in int_greater:
-
 				remainder = greater_candidate - i
 
 				if remainder in int_repr:
@@ -103,6 +106,13 @@ class BagOfWords(object):
 		vectorizer = CountVectorizer(min_df = 1, binary=True, ngram_range=(1,2), vocabulary=BagOfWords.vocab)
 		return vectorizer
 
+	@classmethod
+	def get_vocab_vectorizer(cls, vocab):
+		min_freq = 3
+		vocab = [w for w, count in vocab.iteritems() if count > min_freq]
+		vectorizer = CountVectorizer(min_df = 1, binary=True, ngram_range=(1,2), vocabulary=vocab)
+		return vectorizer
+
 	
 class BagOfWordsBefore(object):
 	def __init__(self, tfiles, *kargs):
@@ -110,8 +120,8 @@ class BagOfWordsBefore(object):
 		self.vectorizer = kargs[0]
 
 	def get_feature_vector(self, tfile_numbers):
+		""" Returns a horizontal feature vector for each of the input numbers """
 		corpus_before = [n.context[0] for n in tfile_numbers]
-
 		return self.vectorizer.fit_transform(corpus_before).toarray()
 
 	def get_feature_names(self):
@@ -132,10 +142,72 @@ class BagOfWordsAfter(object):
 # class Dependencies(object):
 # 	def __init__(self, tfiles, vectorizer=None, sp=None):
 
+class FiveWordsBefore(object):
+	def __init__(self, tfiles, *kargs):
+		self.tfiles = tfiles
+		self.NUM_WORDS_BEFORE = 4
+		vocab = {}
+		for f in self.tfiles:
+			for n in f.numbers:
+				before_context = n.context[0].strip().lower().split()[-self.NUM_WORDS_BEFORE:]
+				for word in before_context:
+					vocab[word] = vocab.get(word,0)+1
+		self.vectorizer = BagOfWords.get_vocab_vectorizer(vocab)
+
+	def get_feature_vector(self, tfile_numbers):
+		corpus_before = [" ".join(n.context[0].lower().split()[-self.NUM_WORDS_BEFORE:]) for n in tfile_numbers]
+		return self.vectorizer.fit_transform(corpus_before).toarray()
+
+	def get_feature_names(self):
+		return ['B5: ' + word for word in self.vectorizer.get_feature_names()]
+
+class FiveWordsAfter(object):
+	def __init__(self, tfiles, *kargs):
+		self.tfiles = tfiles
+		self.NUM_WORDS_AFTER = 3
+		vocab = {}
+		for f in self.tfiles:
+			for n in f.numbers:
+				context = n.context[1].strip().lower().split()[:self.NUM_WORDS_AFTER]
+				for word in context:
+					vocab[word] = vocab.get(word,0) + 1
+		self.vectorizer = BagOfWords.get_vocab_vectorizer(vocab)
+
+	def get_feature_vector(self, tfile_numbers):
+		corpus_after = [" ".join(n.context[1].lower().split()[:self.NUM_WORDS_AFTER]) for n in tfile_numbers]
+		return self.vectorizer.fit_transform(corpus_after).toarray()
+
+	def get_feature_names(self):
+		return ['A5: ' + word for word in self.vectorizer.get_feature_names()]
+
+class Dependencies(object):
+	def __init__(self, tfiles, *kargs):
+		self.tfiles = tfiles
+		self.sp = kargs[1]
+
+	def calculate_tuples(self):
+		return_result = []
+		for f in self.tfiles:
+			for num in f.numbers:
+				try: 
+					dep = self.sp.dependencies("".join(num.context))
+					for d in dep:
+						tup = (d[1], d[2])
+						return_result += [tup]
+				except:
+					print "RPCTransportError Timeout!"
+					print "on the following context:"
+					print "".join(num.context)
+		return return_result
+
+	def get_feature_vector(self, tfile_numbers):
+		with open("tuples.json", 'w') as fp:
+			json.dump(self.calculate_tuples(), fp)
+		return np.zeros((len(tfile_numbers), 1))
 
 
 class FeatureConstructor(object):
-	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder, ContainsOthers, SumsToOther]
+	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder, ContainsOthers, SumsToOther, FiveWordsBefore, FiveWordsAfter]
 
 	def __init__(self, tfiles, stanford_parser_instance):
 		self.tfiles = tfiles
@@ -143,6 +215,24 @@ class FeatureConstructor(object):
 		self.v = BagOfWords.get_vectorizer()
 		self.sp = stanford_parser_instance
 		self.features = [f(tfiles, self.v, self.sp) for f in FeatureConstructor.tfile_feature_classes]
+
+	# def get_feature_matrix(self, tfile):
+	# 	running = np.array([])
+
+	# 	for feature in self.features:
+	# 		feature_vector = feature.get_feature_vector(tfile.numbers)
+	# 		if np.size(feature_vector) == 0:
+	# 			continue
+
+	# 		if np.size(running) == 0:
+	# 			running = feature_vector
+	# 		else:
+	# 			# append running with the feature_vector 
+	# 			running = np.append(running, feature_vector, axis=1)
+	# 	if running.size == 0:
+	# 		return None
+	# 	else:
+	# 		return running
 
 	def get_feature_matrix(self, tfile):
 		running = None
@@ -165,7 +255,6 @@ class FeatureConstructor(object):
 	def get_feature_names(self):
 		names_per_feature = [feat.get_feature_names() for feat in self.features]
 		return [name for names in names_per_feature for name in names]
-
 
 	def assign_feature_vectors(self, tfile):
 		feature_array = self.get_feature_matrix(tfile)

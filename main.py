@@ -8,13 +8,14 @@ from classifier import MainClassifier
 from settings import full_input_dir
 from dependency import StanfordParser
 import logging
-
+# import click
 
 
 class Main():
 	def __init__(self):
-		logging.info('Main. Connecting to the Stanford-parser server (running locally)')
-		self.dep = StanfordParser()
+		# logging.info('Main. Connecting to the Stanford-parser server (running locally)')
+		# self.dep = StanfordParser()
+		self.dep = None
 		logging.info('Main. Reading directory')
 		self.tfiles = read_directory(full_input_dir)
 		logging.info('Main. Constructing Featurizer')
