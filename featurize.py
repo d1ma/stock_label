@@ -207,7 +207,7 @@ class Dependencies(object):
 
 
 class FeatureConstructor(object):
-	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder, ContainsOthers, SumsToOther, FiveWordsBefore, FiveWordsAfter]
+	tfile_feature_classes = [BagOfWordsBefore, BagOfWordsAfter, NumberOrder, ContainsOthers, SumsToOther]
 
 	def __init__(self, tfiles, stanford_parser_instance):
 		self.tfiles = tfiles
@@ -216,23 +216,7 @@ class FeatureConstructor(object):
 		self.sp = stanford_parser_instance
 		self.features = [f(tfiles, self.v, self.sp) for f in FeatureConstructor.tfile_feature_classes]
 
-	# def get_feature_matrix(self, tfile):
-	# 	running = np.array([])
 
-	# 	for feature in self.features:
-	# 		feature_vector = feature.get_feature_vector(tfile.numbers)
-	# 		if np.size(feature_vector) == 0:
-	# 			continue
-
-	# 		if np.size(running) == 0:
-	# 			running = feature_vector
-	# 		else:
-	# 			# append running with the feature_vector 
-	# 			running = np.append(running, feature_vector, axis=1)
-	# 	if running.size == 0:
-	# 		return None
-	# 	else:
-	# 		return running
 
 	def get_feature_matrix(self, tfile):
 		running = None

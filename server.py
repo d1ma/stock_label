@@ -24,12 +24,9 @@ static_dir = 'static'
 app = Flask(__name__, static_folder=static_dir)
 
 
-
-
 ################################################################################
 ####################[ HANDLING REQUESTS ]#######################################
 ################################################################################
-
 @app.route("/")
 @requires_auth
 def dashboard():
@@ -62,33 +59,12 @@ def get_static_route(static_file):
     return get_static(static_file)
 
 
-
-# @app.route("/style.css")
-# def get_style():
-#     return get_static('style.css')
-
-# @app.route("/select.js")
-# def get_select():
-#     return get_static("select.js")
-
-# @app.route("/jquery_changes.js")
-# def get_jquerychanges():
-#     return get_static("jquery_changes.js")
-
-
-# @app.route("/bootstrap.min.css")
-# def get_jquerychanges():
-#     return get_static("")
-
-
-# @app.route("/jquery_changes.js")
-# def get_jquerychanges():
-#     return get_static("jquery_changes.js")
-
-
-
 def get_static(filename):
     return send_from_directory(static_dir, filename)
+
+
+
+
 
 r = None
 if __name__ == '__main__':
