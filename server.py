@@ -1,4 +1,4 @@
-import os 
+import os
 import sys
 import json
 from datetime import datetime, timedelta
@@ -13,11 +13,8 @@ from flask import abort
 from flask import make_response
 
 #=====[ Model import ]====
-import tagged_file
-import featurize
-import main
+from models import *
 from auth import requires_auth
-import settings
 
 #=====[ App/DB setup]=====
 static_dir = 'static'
