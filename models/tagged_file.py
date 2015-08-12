@@ -1,4 +1,4 @@
-""" 
+"""
 
 tagged_file.py
 
@@ -26,7 +26,7 @@ output_vals =  {"n/a": "n/a", "TS": "TS", "PS": "PS", "CS": "CS"}
 class Number(object):
 	def __init__(self, numstr, pos, label, context, original_file):
 		self.match = numstr
-		try: 
+		try:
 			self.num = int(numstr.replace(',', ''))
 		except:
 			print "Not able to process number %s" % numstr
@@ -88,8 +88,8 @@ class TFile(object):
 
 	def __init__(self, filename, index_id):
 		with open(filename) as f:
-			""" 
-			Already implemented: 
+			"""
+			Already implemented:
 			--------------------
 			raw: as read in from file
 			name: filename
@@ -140,8 +140,8 @@ class TFile(object):
 
 	@classmethod
 	def assignFeatures(cls, FeaturizerClass, training_corpus):
-		""" 
-		Creates the featurizer class that is responsible for handling all 
+		"""
+		Creates the featurizer class that is responsible for handling all
 		of the mappings for the passed in corpus
 		"""
 		cls.featurizer = FeaturizerClass(training_corpus)
@@ -165,13 +165,13 @@ class TFile(object):
 
 
 	def to_json(self):
-		d = {'filename': self.name, 'numbers': [ob.__dict__ for ob in self.numbers],
+		d = {'filename': self.filename, 'numbers': [ob.__dict__ for ob in self.numbers],
 		 	'tags': [ob.__dict__ for ob in self.tags]}
 		return json.dumps(d)
 
 
 	def closest_label(self, number_loc):
-		try: 
+		try:
 			return min(self.tags, key=lambda x:abs(x.pos-number_loc))
 		except ValueError:
 			return None
@@ -212,6 +212,6 @@ def get_context(chunk_before, chunk_after):
 	after_end = chunk_after.rfind(" ")
 	before_stripped = chunk_before[before_start:]
 	after_stripped = chunk_after[0:after_end]
-	
+
 
 	return before_stripped, after_stripped

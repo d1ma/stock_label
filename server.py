@@ -62,7 +62,6 @@ def get_static(filename):
 
 
 
-
 r = None
 if __name__ == '__main__':
     settings.set_up()
