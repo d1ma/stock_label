@@ -14,11 +14,11 @@ class Main():
 	def __init__(self):
 		# logging.info('Main. Connecting to the Stanford-parser server (running locally)')
 		# self.dep = StanfordParser()
-		self.dep = None
+		self.dependencyParser = None
 		logging.info('Main. Reading directory')
 		self.tfiles = read_directory(full_input_dir)
 		logging.info('Main. Constructing Featurizer')
-		self.featurizer = FeatureConstructor(self.tfiles, self.dep)
+		self.featurizer = FeatureConstructor(self.tfiles, self.dependencyParser)
 		logging.info('Main. Constructing Classifier')
 		self.cl = MainClassifier(self.tfiles, self.featurizer)
 		self.last_result = None

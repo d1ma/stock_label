@@ -11,11 +11,11 @@ class GeneralModel(object):
 		if X.size == 0:
 			return None
 		return self.clf.predict(X)
-		
+
 	def predict_cv(self, X, y):
 		if X.size == 0:
 			return None
-		return cross_validation.cross_val_predict(self.clf, X, y)	
+		return cross_validation.cross_val_predict(self.clf, X, y)
 
 	def get_report(self, X_all, y_all, cv=5):
 		if X_all.size == 0:
@@ -24,7 +24,7 @@ class GeneralModel(object):
 		return classification_report(y_all, predict)
 
 	def predict_for_file(self, X, raw_nums=None):
-		""" If raw_nums are given, will use those instead of the featurization when 
+		""" If raw_nums are given, will use those instead of the featurization when
 		reversing the dictionary """
 		if X.size == 0:
 			return {}
@@ -67,7 +67,7 @@ class DecisionTree(GeneralModel):
 
 class RandomForest(GeneralModel):
 	def __init__(self, X, y):
-		from sklearn.ensemble import RandomForestClassifier 
+		from sklearn.ensemble import RandomForestClassifier
 		self.model = RandomForestClassifier(n_estimators=300)
 		self.clf = self.model.fit(X, y)
 
@@ -112,7 +112,7 @@ class MainClassifier():
 
 
 	def predict_for_file(self, tfile, exclude=[]):
-		""" 
+		"""
 		Returns a dictionary with keys being the classifier names.
 		Each  value is a dictionary containing classes as keys, mapping to values
 		"""
@@ -167,4 +167,3 @@ class MainClassifier():
 		self.trained_clf = []
 		for cl in used_classifiers:
 			self.trained_clf += [cl(self.train_features, self.train_labels)]
-
