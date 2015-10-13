@@ -6,7 +6,7 @@ def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
     """
-    return username == 'admin' and password == 'ilya'
+    return username == 'admin' and password == 'nlp'
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
